@@ -4,8 +4,42 @@
   _module = function(){
     var iface;
     iface = __q;
-    iface.and = function(){
-      return __q.allSettled(arguments);
+    iface.and = function(promises){
+      var res$, i$, len$, p;
+      if (!Array.isArray(promises)) {
+        res$ = [];
+        for (i$ = 0, len$ = arguments.length; i$ < len$; ++i$) {
+          p = arguments[i$];
+          res$.push(p);
+        }
+        promises = res$;
+      }
+      return __q.all(promises);
+    };
+    iface.andSync = function(promises){
+      var __finalAnd, res$, i$, len$, p, __completed;
+      __finalAnd = __q.defer();
+      if (!Array.isArray(promises)) {
+        res$ = [];
+        for (i$ = 0, len$ = arguments.length; i$ < len$; ++i$) {
+          p = arguments[i$];
+          res$.push(p);
+        }
+        promises = res$;
+      }
+      __completed = __q.allSettled(promises);
+      __completed.then(function(it){
+        var i$, len$, res;
+        for (i$ = 0, len$ = it.length; i$ < len$; ++i$) {
+          res = it[i$];
+          if (res.state === "rejected") {
+            __finalAnd.reject();
+            return;
+          }
+        }
+        return __finalAnd.resolve();
+      });
+      return __finalAnd.promise;
     };
     iface.not = function(it){
       var __not, pTrue, pFalse;
@@ -16,23 +50,66 @@
       pFalse = function(it){
         return __not.resolve(it);
       };
-      it.then(pFalse, pTrue);
+      it.then(pTrue, pFalse);
       return __not.promise;
     };
-    iface.or = function(promises){
-      var __not_or, p;
+    iface.orSync = function(promises){
+      var __finalOr, res$, i$, len$, p, __not_promises, __not_or;
+      __finalOr = __q.defer();
       if (!Array.isArray(promises)) {
-        return promises;
-      }
-      __not_or = iface.and((function(){
-        var i$, ref$, len$, results$ = [];
-        for (i$ = 0, len$ = (ref$ = promises).length; i$ < len$; ++i$) {
-          p = ref$[i$];
-          results$.push(iface.not(p));
+        res$ = [];
+        for (i$ = 0, len$ = arguments.length; i$ < len$; ++i$) {
+          p = arguments[i$];
+          res$.push(p);
         }
-        return results$;
-      }()));
-      return iface.not(__not_or);
+        promises = res$;
+      }
+      res$ = [];
+      for (i$ = 0, len$ = promises.length; i$ < len$; ++i$) {
+        p = promises[i$];
+        res$.push(iface.not(p));
+      }
+      __not_promises = res$;
+      __not_or = __q.allSettled(__not_promises);
+      __not_or = __not_or.then(function(it){
+        var i$, len$, res;
+        for (i$ = 0, len$ = it.length; i$ < len$; ++i$) {
+          res = it[i$];
+          if (res.state === "rejected") {
+            __finalOr.resolve();
+            return;
+          }
+        }
+        return __finalOr.reject();
+      });
+      return __finalOr.promise;
+    };
+    iface.or = function(promises){
+      var __finalOr, res$, i$, len$, p, __not_promises, __not_or, resolveIt, rejectIt;
+      __finalOr = __q.defer();
+      if (!Array.isArray(promises)) {
+        res$ = [];
+        for (i$ = 0, len$ = arguments.length; i$ < len$; ++i$) {
+          p = arguments[i$];
+          res$.push(p);
+        }
+        promises = res$;
+      }
+      res$ = [];
+      for (i$ = 0, len$ = promises.length; i$ < len$; ++i$) {
+        p = promises[i$];
+        res$.push(iface.not(p));
+      }
+      __not_promises = res$;
+      __not_or = __q.all(__not_promises);
+      resolveIt = function(){
+        return __finalOr.resolve();
+      };
+      rejectIt = function(){
+        return __finalOr.reject();
+      };
+      __not_or = __not_or.then(rejectIt, resolveIt);
+      return __finalOr.promise;
     };
     return iface;
   };
