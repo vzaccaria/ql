@@ -4,7 +4,33 @@ _module = ->
 
     iface = __q
 
-    iface.and = -> __q.allSettled & 
+    iface.and = (promises) -> 
+
+        if not Array.is-array(promises)
+            promises := [p for p in &] 
+
+        return __q.all promises
+
+    iface.andSync = (promises) -> 
+
+        __final-and = __q.defer()
+
+        if not Array.is-array(promises)
+            promises := [p for p in &] 
+
+        __completed = __q.allSettled promises
+
+        __completed.then -> 
+            for res in it 
+                if res.state == "rejected"
+                    __final-and.reject()
+                    return
+
+            __final-and.resolve()
+
+        return __final-and.promise
+
+
 
     iface.not =  ->
         __not = __q.defer()
