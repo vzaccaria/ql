@@ -45,15 +45,45 @@ _module = ->
 
         return __not.promise
 
-    iface.or = (promises) ->
+    iface.orSync = (promises) ->
+        __final-or = __q.defer()
 
         if not Array.is-array(promises)
-            return promises  
+            promises := [p for p in &] 
 
-        __not_or = iface.and [ iface.not(p) for p in promises ]
+        __not_promises = [ iface.not(p) for p in promises ]
 
-        return iface.not(__not_or)
-  
+        __not_or = __q.allSettled __not_promises
+        __not_or = __not_or.then ->
+
+            for res in it 
+                if res.state == "rejected"
+                    __final-or.resolve()
+                    return
+
+            __final-or.reject()
+
+        return __final-or.promise
+
+    iface.or = (promises) ->
+
+        __final-or = __q.defer()
+
+        if not Array.is-array(promises)
+            promises := [p for p in &] 
+
+        __not_promises = [ iface.not(p) for p in promises ]
+
+        __not_or = __q.all __not_promises
+
+        resolve-it = -> __final-or.resolve()
+
+        reject-it = -> __final-or.reject()
+
+        __not_or = __not_or.then reject-it, resolve-it
+
+        return __final-or.promise
+
     return iface
  
 module.exports = _module()
