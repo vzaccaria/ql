@@ -15,7 +15,7 @@ _module = ->
         p-false = ->
             __not.resolve(it)
 
-        it.then p-false, p-true
+        it.then p-true, p-false
 
         return __not.promise
 

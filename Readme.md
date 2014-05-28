@@ -3,9 +3,12 @@
 
 This very simple library adds logic operators to compose promises. Operators added: 
 
-* `and` (synonym for Q.settleAll)
+* `and` (rejects as soon as one of the input promises is rejected)
+* `andSync` (rejects when all promises are completed and at least one of them is rejected)
 * `not` 
-* `or`
+* `or` (resolves as soon as one of the input promises is resolved.)
+* `orSync` (resolves when all promises are completed and at least one of them is resolved.)
+
 
 **Installation**:
 
@@ -23,3 +26,4 @@ The library extends `Q`:
     Q.or(p1,Q.not(p2)).then(function() {
         console.log("Either p1 succeeded or p2 failed");
         })
+
