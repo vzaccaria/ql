@@ -4,6 +4,12 @@ _module = ->
 
     iface = __q
 
+#                        __
+#       ____ _____  ____/ /
+#      / __ `/ __ \/ __  / 
+#     / /_/ / / / / /_/ /  
+#     \__,_/_/ /_/\__,_/   
+#                          
     iface.and = (promises) -> 
 
         if not Array.is-array(promises)
@@ -30,8 +36,15 @@ _module = ->
 
         return __final-and.promise
 
+    iface.syncResolveOnAllResolved  = iface.andSync
+    iface.asyncRejectOnFirstRejected = iface.and
 
-
+#                     __ 
+#        ____  ____  / /_
+#       / __ \/ __ \/ __/
+#      / / / / /_/ / /_  
+#     /_/ /_/\____/\__/  
+#                        
     iface.not =  ->
         __not = __q.defer()
 
@@ -45,6 +58,12 @@ _module = ->
 
         return __not.promise
 
+#                  
+#       ____  _____
+#      / __ \/ ___/
+#     / /_/ / /    
+#     \____/_/     
+#                  
     iface.orSync = (promises) ->
         __final-or = __q.defer()
 
@@ -83,6 +102,10 @@ _module = ->
         __not_or = __not_or.then reject-it, resolve-it
 
         return __final-or.promise
+
+    iface.syncRejectOnAllRejected     = iface.orSync
+    iface.asyncResolveOnFirstResolved = iface.or
+
 
     return iface
  

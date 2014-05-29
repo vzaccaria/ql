@@ -41,6 +41,8 @@
       });
       return __finalAnd.promise;
     };
+    iface.syncResolveOnAllResolved = iface.andSync;
+    iface.asyncRejectOnFirstRejected = iface.and;
     iface.not = function(it){
       var __not, pTrue, pFalse;
       __not = __q.defer();
@@ -111,6 +113,8 @@
       __not_or = __not_or.then(rejectIt, resolveIt);
       return __finalOr.promise;
     };
+    iface.syncRejectOnAllRejected = iface.orSync;
+    iface.asyncResolveOnFirstResolved = iface.or;
     return iface;
   };
   module.exports = _module();
