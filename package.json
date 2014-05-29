@@ -1,6 +1,6 @@
 {
   "name": "ql",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Use logic to compose promises",
   "main": "index.js",
   "scripts": {
