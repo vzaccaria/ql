@@ -36,8 +36,6 @@ _module = ->
 
         return __final-and.promise
 
-    iface.syncResolveOnAllResolved  = iface.andSync
-    iface.asyncRejectOnFirstRejected = iface.and
 
 #                     __ 
 #        ____  ____  / /_
@@ -103,8 +101,15 @@ _module = ->
 
         return __final-or.promise
 
-    iface.syncRejectOnAllRejected     = iface.orSync
-    iface.asyncResolveOnFirstResolved = iface.or
+
+    iface.sRejectOnAllRejected    = iface.orSync
+    iface.sResolveOnAllResolved   = iface.andSync
+
+    iface.aResolveOnFirstResolved = iface.or
+    iface.aRejectOnFirstRejected  = iface.and
+
+    iface.aRejectOnFirstResolved  = iface.aResolveOnFirstResolved >> iface.not
+    iface.aResolveOnFirstRejected = iface.aRejectOnFirstRejected >> iface.not
 
 
     return iface
