@@ -111,6 +111,20 @@
       __not_or = __not_or.then(rejectIt, resolveIt);
       return __finalOr.promise;
     };
+    iface.tap = function(promise, cb){
+      promise.then(function(it){
+        return cb({
+          state: "resolved",
+          value: it
+        });
+      }, function(it){
+        return cb({
+          state: "rejected",
+          value: it
+        });
+      });
+      return promise;
+    };
     iface.sRejectOnAllRejected = iface.orSync;
     iface.sResolveOnAllResolved = iface.andSync;
     iface.aResolveOnFirstResolved = iface.or;

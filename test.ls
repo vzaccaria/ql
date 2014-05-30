@@ -22,6 +22,13 @@ create-rejected-promise = ->
 
 Q = require('./index.js')
 
+create-rejected-promise-tap = ->
+    d = Q.defer()
+    p = d.promise   
+    d.reject("ciop")
+    return p
+
+
 describe 'QL — ', (empty) ->
 
   describe 'not', (empty) ->
@@ -174,3 +181,36 @@ describe 'QL — ', (empty) ->
         p2 = create-resolved-promise()
 
         Q.and(p1,p2) `notifies-on-fail` done
+
+
+describe 'and', (empty) ->
+    it 'should tap transparently into a promise', (done) ->
+        p1 = create-resolved-promise()
+        mytap = (v) ->
+
+        Q.tap(p1, mytap) `notifies-on-success` done
+
+    it 'should tap transparently into a promise', (done) ->
+        p1 = create-rejected-promise()
+        mytap = (v) ->
+
+        Q.tap(p1, mytap) `notifies-on-fail` done
+
+    it 'should invoke tap', (done) ->
+        p1 = create-rejected-promise()
+        mytap = (v) ->
+            should.exist(v.state)
+            v.state.should.be.equal('rejected')
+            done()
+
+        Q.tap(p1, mytap) 
+
+    it 'should invoke tap', (done) ->
+        p1 = create-resolved-promise()
+        mytap = (v) ->
+            should.exist(v.state)
+            v.state.should.be.equal('resolved')
+            done()
+
+        Q.tap(p1, mytap) 
+

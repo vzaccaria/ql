@@ -102,6 +102,11 @@ _module = ->
         return __final-or.promise
 
 
+    iface.tap = (promise, cb) ->
+        promise.then (-> cb(state: "resolved", value: it)) , (-> cb(state: "rejected", value: it))
+        return promise 
+
+
     iface.sRejectOnAllRejected    = iface.orSync
     iface.sResolveOnAllResolved   = iface.andSync
 
