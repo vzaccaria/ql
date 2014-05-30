@@ -112,18 +112,19 @@
       return __finalOr.promise;
     };
     iface.tap = function(promise, cb){
-      promise.then(function(it){
-        return cb({
+      return promise.then(function(it){
+        cb({
           state: "resolved",
           value: it
         });
+        return it;
       }, function(it){
-        return cb({
+        cb({
           state: "rejected",
           value: it
         });
+        throw it;
       });
-      return promise;
     };
     iface.sRejectOnAllRejected = iface.orSync;
     iface.sResolveOnAllResolved = iface.andSync;

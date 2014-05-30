@@ -103,8 +103,7 @@ _module = ->
 
 
     iface.tap = (promise, cb) ->
-        promise.then (-> cb(state: "resolved", value: it)) , (-> cb(state: "rejected", value: it))
-        return promise 
+        return promise.then (-> cb(state: "resolved", value: it); return it) , (-> cb(state: "rejected", value: it); throw it)
 
 
     iface.sRejectOnAllRejected    = iface.orSync
